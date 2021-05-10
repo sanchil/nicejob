@@ -1,0 +1,19 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env"
+            ,
+            {
+               
+                "modules": false,
+                "targets":{"node":true}
+            }
+        ]
+    ],
+    
+    "sourceType":"module"
+    
+
+}
+
+

@@ -1,0 +1,26 @@
+https://github.com/sanchil/nicejob.git
+
+git init
+git remote add origin https://github.com/sanchil/nicejob.git
+
+
+echo "# agt1" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/sanchil/agt1.git
+git push -u origin master
+
+git remote add origin https://github.com/sanchil/agt1.git
+git push -u origin master
+
+# undo last commit
+git reset --soft HEAD~1
+
+# routine
+
+git pull origin master
+git add *
+git commit -a
+git commit -m "first commit"
+git push -u origin master
