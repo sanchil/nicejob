@@ -124,6 +124,7 @@ module.exports = { presets, sourceType };
 
 ########################## Docker ############################
 
+docker build -t sanchil/nicejob .
 
 docker run --name nodeapp -dp 4000:3000 \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
@@ -131,21 +132,49 @@ docker run --name nodeapp -dp 4000:3000 \
   -e NODE_ENV=prod \
   sanchil/nicejob
 
-docker build -t sanchil/nicejob .
+
   
+########################## Git ###############################
+https://github.com/sanchil/nicejob.git
+
+git init
+git remote add origin https://github.com/sanchil/nicejob.git
+
+
+echo "# agt1" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/sanchil/agt1.git
+git push -u origin master
+
+git remote add origin https://github.com/sanchil/agt1.git
+git push -u origin master
+
+# undo last commit
+git reset --soft HEAD~1
+git remote show origin
+
+# routine
+
+git pull origin master
+git add *
+git commit -a
+git commit -m "first commit"
+git push -u origin master
+
+########################## curl ###############################
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/1 -d '{"selector":{"type":"HOME"}}'
+
+
+curl -X POST -H "Content-Type:application/json" \ 
+ http://localhost:3000/Users \
+ -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/newone_zSCS -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+
+curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1 
 
 
 
-
-
-https://firestore.googleapis.com/v1/{name=projects/*/databases/*/documents/*/**}
-projects/{project_id}/databases/{database_id}/documents/{document_path}.
-projects/nicedb314/databases/(default)/documents/Users/0
-
-https://firestore.googleapis.com/v1/projects/nicedb314/databases/%28default%29/documents/Users/0
-
-curl https://www.google.com/accounts/ClientLogin \
---data-urlencode Email=brad.gushue@example.com --data-urlencode Passwd=new+foundland \
--d accountType=GOOGLE \
--d source=Google-cURL-Example \
--d service=lh2
