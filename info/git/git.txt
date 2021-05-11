@@ -25,3 +25,10 @@ git add *
 git commit -a
 git commit -m "first commit"
 git push -u origin master
+
+# list branches
+
+git branch -a
+git checkout <feature_branch> 
+git branch    
+git branch 
