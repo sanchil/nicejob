@@ -90,7 +90,10 @@ const readMany = async (params, lim) => {
   };
 
   if (limNum > 0) {
-    return userCollections.limit(limNum).get(getOptions);
+    return userCollections.limit(limNum).get(getOptions).then(doc => doc).catch(err => {
+      // add a check to an error code.
+      return userCollections.limit(limNum).get();
+    });
   } else {
     return [];
   }

@@ -8,7 +8,8 @@ npm i --save @google-cloud/firestore
 npm i --save dotenv 
 npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
 npm install webpack webpack-cli --save-dev
-npm install uuid
+npm install nanoid
+npm install --save-dev jest
 
 # generate db sa and json key file
 
