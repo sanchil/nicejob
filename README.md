@@ -13,15 +13,73 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 #### create firestore account
+
+Create google project on console.cloud.com
+
 #### create a firestore db
+Create a firestore db and manually add a few small records. For sake of demo. 
+This project adds following three fields
+  
+  
+{
+first_name:,
+  
+  
+last_name:,
+  
+  
+email:,
+}
+
 #### install gcloud
+This is optional but one may install the gcloud sdk on local environment to set up service accounts and access credentials for your project
+
 #### create a serviceaccount and a key file
 
+following are the gcloud commands that you need to execute to get a service account and credentials.
+
+```bash
+gcloud iam service-accounts create <serviceaaccount_name>
+gcloud projects add-iam-policy-binding <projectid> --member="serviceAccount:<serviceaaccount_name>@<project_id>.iam.gserviceaccount.com" --role="roles/owner"
+gcloud iam service-accounts keys create <key_file_name>.json --iam-account=<serviceaaccount_name>@<project_id>.iam.gserviceaccount.com
+
 ```
-Give examples
+For retrieving the key file do an ls and a cat on the key file and copy it and save it locally
+
+```bash
+ls -l
+cat key_file_name>.json
 ```
 
-## Installation
+
+## Installation via Docker file.
+
+Run the db package and companion package via a docker file.
+
+Download the docker file and presuming that docker environment has been set up locally.
+
+```bash
+docker build -t sanchil/nicejob .
+
+docker run --name nodeapp -dp 4000:3000 \
+  -e GOOGLE_APPLICATION_CREDENTIALS=<key_file_name>.json \
+  -e USERS=<collection> \
+  -e NODE_ENV=prod \
+  sanchil/nicejob
+```
+#### to stop the application  
+```bash
+docker stop nodeapp
+```
+
+#### force stop and remove the application  
+```bash
+docker rm -f nodeapp
+```
+
+Access the application on http://localhost:4000.
+
+## Manual Installation and Setup.
 
 ```bash
 
@@ -35,15 +93,55 @@ npm i --save-dev jest
 
 ```
 
+
+
 ## Usage
 
-```python
-import foobar
+To start the application change into nicejob app directory and run the following command.
 
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
+```bash
+
+npm run start:prod
+
 ```
+To clean and build separately run the following two commands.
+
+```bash
+
+npm run clean
+npm run build
+
+```
+
+### The access the services
+
+
+##### readOne
+
+```bash
+curl -X GET -H "Content-Type:application/json" http://localhost:3000/:collection/:id 
+```
+
+##### readMany
+
+```bash
+curl -X GET -H "Content-Type:application/json" http://localhost:3000/:collection
+```
+
+##### write
+To create a record
+
+```bash
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/:collection
+```
+
+##### update
+To update a record
+
+```bash
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/:collection/:id
+```
+
 
 
 ### Installing
@@ -90,13 +188,17 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Visual Studio Code](https://visualstudio.microsoft.com/) - The Editor
+* [NodeJS] (https://nodejs.org/) - The App platform
+* [Git](https://github.com/) - Version Control
+* [Docker](https://www.docker.com) - Containerization
+* [Firestore](https://cloud.google.com/firestore) - Database
+* [Google Cloud](https://console.cloud.google.com/) - Cloud Solutions
+
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md]for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
@@ -104,31 +206,19 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Sandeep L Chiluveru** - 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
 
 
 
 
 
 
-
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
