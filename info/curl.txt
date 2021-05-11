@@ -5,7 +5,7 @@ curl -X POST -H "Content-Type:application/json" \
  http://localhost:3000/Users \
  -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
 
- curl -X POST -H "Content-Type:application/json" \ 
- http://localhost:3000/Users/newone_zSCS \
- -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/newone_zSCS -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+
+curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1 
 

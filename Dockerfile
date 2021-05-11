@@ -3,6 +3,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY dist ./
-EXPOSE 8080
+EXPOSE 3000
 CMD [ "node", "./bin/www" ]
 #CMD [ "ls", "-al" ]

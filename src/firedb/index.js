@@ -9,10 +9,19 @@ const path  = require('path');
 const Firestore = require('@google-cloud/firestore');
 
 //console.log(path.resolve('src/keys/',process.env.GOOGLE_APPLICATION_CREDENTIALS));
+let keyfile="";
+if(process.env.NODE_ENV=='prod'){
+  keyfile = process.env.PWD+'/keys/'+process.env.GOOGLE_APPLICATION_CREDENTIALS;
+}else{
+  keyfile = process.env.PWD+'/src/keys/'+process.env.GOOGLE_APPLICATION_CREDENTIALS;
+}
+
+
+console.log("Key file path", keyfile);
 
 const connectdb = new Firestore({
   projectId: 'nicedb314',
-  keyFilename: path.resolve('src/keys/',process.env.GOOGLE_APPLICATION_CREDENTIALS),
+  keyFilename: keyfile
 });
 
 

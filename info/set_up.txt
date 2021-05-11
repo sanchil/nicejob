@@ -3,13 +3,12 @@
 # install gcloud
 # create a serviceaccount and a key file
 
-# packages 
-npm i --save @google-cloud/firestore
-npm i --save dotenv 
-npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
-npm install webpack webpack-cli --save-dev
-npm install nanoid
-npm install --save-dev jest
+# project details
+
+Project name:   nicedb
+Project ID:     nicedb314
+Project number: 85945956286
+
 
 # generate db sa and json key file
 
@@ -45,6 +44,99 @@ version: 1
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nicejobsa%40nicedb314.iam.gserviceaccount.com"
 }
+
+
+# packages 
+npm i --save @google-cloud/firestore
+npm i --save dotenv 
+npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
+npm install nanoid
+npm install --save-dev jest
+
+
+
+
+##################### Env ##################################
+
+For dev builds the NODE_ENV=dev in .env file.
+For prod builds all the environment variables are provided via docker's
+environment variables
+
+# .env
+GOOGLE_APPLICATION_CREDENTIALS='nicejob_key.json'
+USERS='Users'
+NODE_ENV='dev'
+
+
+##################### Babel #################################
+##### babel.config.js
+const presets = [
+    [
+        "@babel/preset-env"
+        ,
+        {
+            useBuiltIns: "usage",
+            debug: true,
+            modules: false
+        }
+    ]
+];
+
+const sourceType = "module";
+
+
+module.exports = { presets, sourceType };
+
+##### babel.config.json
+
+{
+    "presets": [
+        [
+            "@babel/preset-env"
+            ,
+            {
+               
+                "modules": false,
+                "targets":{"node":true}
+            }
+        ]
+    ],
+    
+    "sourceType":"module"
+    
+
+}
+
+##################### Jest ##################################
+
+# jest in package.json
+
+ "jest": {
+    "setupFiles": [
+      "./setJestEnvVars.js"
+    ]
+  }
+
+  # inside setJestEnvVars.js add the following line
+
+  process.env.GOOGLE_APPLICATION_CREDENTIALS='nicejob_key.json'
+
+
+########################## Docker ############################
+
+
+docker run --name nodeapp -dp 4000:3000 \
+  -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
+  -e USERS=Users \
+  -e NODE_ENV=prod \
+  sanchil/nicejob
+
+docker build -t sanchil/nicejob .
+  
+
+
+
+
 
 https://firestore.googleapis.com/v1/{name=projects/*/databases/*/documents/*/**}
 projects/{project_id}/databases/{database_id}/documents/{document_path}.
