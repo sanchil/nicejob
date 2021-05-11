@@ -16,6 +16,7 @@ git push -u origin master
 
 # undo last commit
 git reset --soft HEAD~1
+git remote show origin
 
 # routine
 
