@@ -9,8 +9,7 @@
                 "targets":{"node":true}
             }
         ]
-    ],
-    
+    ],    
     "sourceType":"module"
     
 

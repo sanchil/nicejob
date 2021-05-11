@@ -10,11 +10,30 @@ var cookieParser = require('cookie-parser');
 
 var logger = require('morgan');
 
+const {
+  Firestore
+} = require('@google-cloud/firestore');
+
+const session = require('express-session');
+
+const {
+  FirestoreStore
+} = require('@google-cloud/connect-firestore');
+
 var indexRouter = require('./routes/index');
 
 var usersRouter = require('./routes/users');
 
-var app = express(); // view engine setup
+var app = express();
+app.use(session({
+  store: new FirestoreStore({
+    dataset: new Firestore(),
+    kind: 'express-sessions'
+  }),
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: true
+})); // view engine setup
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

@@ -9,7 +9,8 @@
  */
 const { nanoid } = require('nanoid');
 
-var connectdb = require('../index.js');
+var connectdb = require('../../firedb');
+
 
 /**
  * ##########################################################################

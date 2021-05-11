@@ -9,6 +9,7 @@ Project name:   nicedb
 Project ID:     nicedb314
 Project number: 85945956286
 
+KEY=AIzaSyC_vnEq_M-KsGi9bCfn-kohYYaaPeo2YNs
 
 # generate db sa and json key file
 
@@ -31,6 +32,9 @@ bindings:
 etag: BwXB8qWJ9qA=
 version: 1
 
+############## the service account file for validating api calls ###
+### store this in keys folder in the root of the app project ##########
+
 
 {
   "type": "service_account",
@@ -45,10 +49,22 @@ version: 1
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nicejobsa%40nicedb314.iam.gserviceaccount.com"
 }
 
+################# .env file #######################
+# note full path to the key file muste be stated here
+# you will only need to instantiante the firedb object without any parameters
+# like so 
+# const fireDBCon = new Firestore();
+
+GOOGLE_APPLICATION_CREDENTIALS=./keys/nicejob_key.json
+COLLECTION=Users
+NODE_ENV=dev
+KEY=AIzaSyC_vnEq_M-KsGi9bCfn-kohYYaaPeo2YNs
+####################################################
+
 
 # packages 
-npm i --save @google-cloud/firestore
-npm i --save dotenv 
+npm i --save @google-cloud/firestore @google-cloud/connect-firestore
+npm i --save dotenv express-session 
 npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
 npm install nanoid
 npm install --save-dev jest
@@ -124,13 +140,26 @@ module.exports = { presets, sourceType };
 
 ########################## Docker ############################
 
-docker build -t sanchil/nicejob .
+docker build -t sanchil/nicejob:1.1 .
+docker image push sanchil/nicejob:1.1
 
 docker run --name nodeapp -dp 4000:3000 \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
   -e USERS=Users \
   -e NODE_ENV=prod \
-  sanchil/nicejob
+  sanchil/nicejob:1.3
+
+## Dockerfile
+FROM node:14
+WORKDIR /app
+COPY package*.json 
+RUN npm install
+COPY dist ./ 
+COPY keys ./
+EXPOSE 3000
+CMD [ "node", "./bin/www" ]
+#CMD [ "ls", "-al" ]
+
 
 
   
