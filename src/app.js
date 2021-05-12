@@ -7,6 +7,7 @@ var logger = require('morgan');
 const {Firestore} = require('@google-cloud/firestore');
 const session = require('express-session');
 const {FirestoreStore} = require('@google-cloud/connect-firestore');
+const mcache = require('memory-cache');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -27,8 +28,8 @@ var app = express();
 );
 
 // view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());

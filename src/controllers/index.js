@@ -8,9 +8,14 @@
  */
 
 
-var db = require('firestoreapi');
+var Database = require('firestoreapi');
 const { json } = require('express');
 
+const db = new Database({
+    project_id: process.env.PROJID,
+    cache_max_age: process.env.NICEAPP_CACHE_MAX_AGE,
+    cache_allocated_memory: process.env.NICEAPP_CACHE_ALLOCATED_MEM,
+});
 
 
 const readOneCtrl = (req, res, next) => {
