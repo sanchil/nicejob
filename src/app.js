@@ -11,8 +11,8 @@ const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const redis = require("redis");
 
 const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST || localhost,
-  port: process.env.REDIS_PORT || 6379
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT
 });
 
 var indexRouter = require('./routes/index');
