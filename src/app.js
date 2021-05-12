@@ -9,7 +9,11 @@ const session = require('express-session');
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 
 const redis = require("redis");
-const redisClient = redis.createClient(6379);
+//const redisClient = redis.createClient(6379);
+const redisClient = redis.createClient({
+  host: 'localhost',
+  port: 6379
+});
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -39,32 +43,38 @@ const cache_expire = parseInt(process.env.NICEAPP_CACHE_MAX_AGE);
 
 var cache = (cachetimeout) => {
   return (req, res, next) => {
+
     let key = '__express__' + req.originalUrl || req.url
-    redisClient.get(key, (err, cachedBody) => {
-      if (err) {
-        res.sendResponse = res.send
-        res.send = (body) => {
-          redisClient.set(key, body);
-          redisClient.expire(key, cachetimeout * 1000);
-          res.sendResponse(body)
+    if (req.method == 'GET') {
+      redisClient.get(key, (err, cachedBody) => {
+        if (err) {
+          res.sendResponse = res.send
+          res.send = (body) => {
+            redisClient.set(key, body);
+            redisClient.expire(key, cachetimeout * 1000);
+            res.sendResponse(body)
+          }
+
+        }
+        if (cachedBody) {
+          res.send(cachedBody)
+          return
+        } else {
+          res.sendResponse = res.send
+          res.send = (body) => {
+            redisClient.set(key, body);
+            redisClient.expire(key, cachetimeout * 1000);
+            res.sendResponse(body)
+          }
+          next()
         }
 
-      }
-      if (cachedBody) {
-        res.send(cachedBody)
-        return
-      } else {
-        res.sendResponse = res.send
-        res.send = (body) => {
-          redisClient.set(key, body);
-          redisClient.expire(key, cachetimeout * 1000);
-          res.sendResponse(body)
-        }
-        next()
-      }
 
+      });
 
-    });
+    } else {
+      next();
+    }
 
   }
 }
