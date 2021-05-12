@@ -11,8 +11,8 @@ const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const redis = require("redis");
 //const redisClient = redis.createClient(6379);
 const redisClient = redis.createClient({
-  host: 'localhost',
-  port: 6379
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT
 });
 
 var indexRouter = require('./routes/index');
@@ -31,11 +31,12 @@ app.use(session({
 }));
 
 redisClient.on("error", function (error) {
-  console.error(error);
+  console.error("REDIS CLIENT ERROR: ", error);
 });
-console.log("Processe Cache expiry: ", parseInt(process.env.NICEAPP_CACHE_MAX_AGE));
+//console.log("Processe Cache expiry: ", parseInt(process.env.NICEAPP_CACHE_MAX_AGE));
 
-const cache_expire = parseInt(process.env.NICEAPP_CACHE_MAX_AGE);
+const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
+console.log("Processe Cache expiry: ", cache_expire);
 
 var cache = cachetimeout => {
   return (req, res, next) => {

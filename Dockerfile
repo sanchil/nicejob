@@ -12,9 +12,6 @@ RUN npm install
 COPY /nicejob/dist ./
 COPY /nicejob/keys ./
 COPY --from=node1 /fireStoreAPI /fireStoreAPI
-#RUN npm install /fireStoreAPI && apt-get update && apt-get install -y redis-server
 RUN npm install /fireStoreAPI
 EXPOSE 3000
-EXPOSE 6379
 CMD [ "node", "./bin/www" ]
-#CMD [ "ls", "-al" ]
