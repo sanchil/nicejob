@@ -220,6 +220,17 @@ git commit -a
 git commit -m "first commit"
 git push -u origin master
 
+
+git clone https://github.com/sanchil/nicejob.git
+cd nicejob
+git checkout master
+
+git clone https://github.com/sanchil/fireStoreAPI.git
+cd fireStoreAPI
+git checkout master
+
+
+
 ########################## curl ###############################
 
 curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/1 -d '{"selector":{"type":"HOME"}}'

@@ -8,7 +8,7 @@
  */
 
 
-var Database = require('firestoreapi');
+var Database = require('fire-store-api');
 const { json } = require('express');
 
 const db = new Database({
