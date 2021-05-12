@@ -150,6 +150,7 @@ docker run --name nodeapp -dp 4000:3000 \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
   -e USERS=Users \
   -e NODE_ENV=prod \
+  -e REDIS_HOST=redis \
   sanchil/nicejob:1.3
 
 ## Dockerfile

@@ -11,7 +11,7 @@ const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const redis = require("redis");
 //const redisClient = redis.createClient(6379);
 const redisClient = redis.createClient({
-  host: 'localhost',
+  host: process.env.REDIS_HOST,
   port: 6379
 });
 
