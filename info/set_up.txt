@@ -64,9 +64,9 @@ KEY=AIzaSyC_vnEq_M-KsGi9bCfn-kohYYaaPeo2YNs
 
 # packages 
 npm i --save @google-cloud/firestore @google-cloud/connect-firestore
-npm i --save dotenv express-session 
+npm i --save dotenv express-session memjs
 npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
-npm install nanoid
+npm install nanoid 
 npm install --save-dev jest
 
 
@@ -139,20 +139,24 @@ module.exports = { presets, sourceType };
 
 
 ########################## Docker ############################
+# normal build within nicejob folder
+docker build -t sanchil/nicejob:1.3 .
 
-docker build -t sanchil/nicejob:1.4 .
-docker image push sanchil/nicejob:1.4
+# from parent folder to build fireStoreAPI as well
+docker build -t sanchil/nicejob:1.3 -f nice/job/Dockerfile .
+docker image push sanchil/nicejob:1.3
 
 docker run --name nodeapp -dp 4000:3000 \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
   -e USERS=Users \
   -e NODE_ENV=prod \
-  sanchil/nicejob:1.5
+  sanchil/nicejob:1.3
 
 ## Dockerfile
 FROM node:14 AS node1
 WORKDIR /fireStoreAPI
 COPY /fireStoreAPI/package*.json ./
+COPY /fireStoreAPI ./
 RUN npm install
 COPY fireStoreAPI/index.js ./
 
@@ -163,7 +167,7 @@ RUN npm install
 COPY /nicejob/dist ./
 COPY /nicejob/keys ./
 COPY --from=node1 /fireStoreAPI /fireStoreAPI
-RUN npm install /fireStoreAPI
+RUN npm install /fireStoreAPI && apt-get update && apt-get install -y redis-server
 EXPOSE 3000
 CMD [ "node", "./bin/www" ]
 #CMD [ "ls", "-al" ]
@@ -216,3 +220,7 @@ curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1
 
 
 
+############## redis caching ###########################
+
+sudo apt update
+sudo apt install redis-server

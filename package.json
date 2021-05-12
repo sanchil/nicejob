@@ -20,9 +20,10 @@
     "express-session": "^1.17.1",
     "firestoreapi": "file:../fireStoreAPI",
     "http-errors": "~1.6.3",
-    "memory-cache": "^0.2.0",
+    "memjs": "^1.3.0",
     "morgan": "~1.9.1",
-    "nanoid": "^3.1.22"
+    "nanoid": "^3.1.22",
+    "redis": "^3.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
