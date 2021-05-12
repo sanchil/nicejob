@@ -5,7 +5,8 @@
   "scripts": {
     "build": "npx babel src -d dist -D",
     "start": "node ./src/bin/www",
-    "start:prod": "npm run clean && npm run build && nodemon ./dist/bin/www",
+    "start:dev": "nodemon ./src/bin/www",
+    "start:prod": "npm run clean && npm run build && node ./dist/bin/www",
     "clean": "rimraf dist",
     "test": "jest"
   },

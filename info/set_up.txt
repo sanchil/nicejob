@@ -64,7 +64,7 @@ KEY=AIzaSyC_vnEq_M-KsGi9bCfn-kohYYaaPeo2YNs
 
 # packages 
 npm i --save @google-cloud/firestore @google-cloud/connect-firestore
-npm i --save dotenv express-session memjs
+npm i --save dotenv express-session memjs redis
 npm i --save-dev @babel/cli @babel/core @babel/node @babel/preset-env nodemon rimraf
 npm install nanoid 
 npm install --save-dev jest
@@ -150,7 +150,7 @@ docker build -t sanchil/nicejob:1.3 -f nice/job/Dockerfile .
 docker image push sanchil/nicejob:1.3
 
 # run a node app container
-docker run --name nodeapp -dp 4000:3000 \
+docker run --name nodeapp -dp 3000:3000 \
   --network redis-net \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
   -e USERS=Users \
@@ -161,9 +161,10 @@ docker run --name nodeapp -dp 4000:3000 \
 
 # build redis image
 docker build -t sanchil/cache:1.0 -f nicejob/Dockerfile.redis .
+docker image push sanchil/cache:1.0
 
 # run a redis container
-docker run --name redis -dp 6380:6379 --network redis-net sanchil/cache:1.0
+docker run --name redis -dp 6379:6379 --network redis-net sanchil/cache:1.0
 
 ## Dockerfile
 FROM node:14 AS node1
@@ -187,7 +188,8 @@ CMD [ "node", "./bin/www" ]
 
 
 
-
+ docker rename CONTAINER NEW_NAME
+ docker network connect redis-net redis
   
 ########################## Git ###############################
 https://github.com/sanchil/nicejob.git
@@ -229,6 +231,8 @@ curl -X POST -H "Content-Type:application/json" \
 
 curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/newone_zSCS -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
 
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users -d '{"first_name":"Condor","last_name":"Eagle","email":"condor.eagle@albatross.com"}'
+
 curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1 
 
 
@@ -237,3 +241,21 @@ curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1
 
 sudo apt update
 sudo apt install redis-server
+
+
+############## google VM ###############################
+
+public ip:      35.215.58.62
+internal ip:    10.162.0.4
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/1 -d '{"selector":{"type":"HOME"}}'
+
+
+curl -X POST -H "Content-Type:application/json" \ 
+ http://localhost:3000/Users \
+ -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users -d '{"first_name":"abc","last_name":"xyz","email":"AddEmail"}'
+
+curl -X GET -H "Content-Type:application/json" http://35.215.58.62:3000/Users/0 
+
