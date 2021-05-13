@@ -73,7 +73,7 @@ const readManyCtrl = (req, res, next) => {
 const writeCtrl = (req, res, next) => {
     const params = {}
     params['collection'] = req.params.collection;
-    params['id'] = req.params.id;
+    
     db.write(params, req.body);
 
     res.json(req.body);
@@ -81,8 +81,13 @@ const writeCtrl = (req, res, next) => {
 
 
 const updateDocCtrl = (req, res, next) => {
+   
     if (req.params.id) {
-        queries.updateDoc(req.params.collection, req.params.id, req.body)
+        const params = {}
+        params['collection'] = req.params.collection;        
+        params['id'] = req.params.id;
+        //console.log("Controller params id",params['id']);
+        db.write(req.params, req.body);        
     } else {
         console.log("Doc update failed. Improper Id");
     }
