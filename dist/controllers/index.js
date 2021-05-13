@@ -7,7 +7,7 @@
  * #############################################################
  */
 
-var Database = require('../../fireStoreAPI');
+var Database = require('fire-store-api');
 const { json } = require('express');
 
 const db = new Database({
@@ -75,7 +75,6 @@ const updateDocCtrl = (req, res, next) => {
         params['id'] = req.params.id;
         //console.log("Controller params id",params['id']);
         db.write(req.params, req.body);
-        //queries.updateDoc(req.params.collection, req.params.id, req.body)
     } else {
         console.log("Doc update failed. Improper Id");
     }
