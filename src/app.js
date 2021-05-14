@@ -91,10 +91,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use('/', cache(cache_expire), indexRouter);
-app.use('/', indexRouter);
+app.use('/', cache(cache_expire), indexRouter);
+//app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/health', healthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
