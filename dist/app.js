@@ -33,10 +33,8 @@ app.use(session({
 redisClient.on("error", function (error) {
   console.error("REDIS CLIENT ERROR: ", error);
 });
-//console.log("Processe Cache expiry: ", parseInt(process.env.NICEAPP_CACHE_MAX_AGE));
 
 const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
-console.log("Processe Cache expiry: ", cache_expire);
 
 var cache = cachetimeout => {
   return (req, res, next) => {
@@ -80,9 +78,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', cache(cache_expire), indexRouter);
+//app.use('/', cache(cache_expire), indexRouter);
+app.use('/', indexRouter);
 app.use('/users', usersRouter);
+//app.use('/health', healthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

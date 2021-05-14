@@ -7,6 +7,13 @@
  * #############################################################
  */
 
+const { google } = require('googleapis');
+const Compute = require('@google-cloud/compute');
+const { JWT } = require('google-auth-library');
+
+const fetch = require('node-fetch');
+const fs = require('fs');
+
 var Database = require('fire-store-api');
 const { json } = require('express');
 
@@ -15,6 +22,11 @@ const db = new Database({
     cache_max_age: process.env.NICEAPP_CACHE_MAX_AGE,
     cache_allocated_memory: process.env.NICEAPP_CACHE_ALLOCATED_MEM
 });
+
+const basicContrl = (req, res, next) => {
+    console.log("Url: ", req.url);
+    res.json({ "hello": "world !!!" });
+};
 
 const readOneCtrl = (req, res, next) => {
     if (req.params.id) {
@@ -35,6 +47,7 @@ const readOneCtrl = (req, res, next) => {
         console.log("Get Doc failed. Improper Id");
         res.json({ "error": "Get Doc failed. Improper Id" });
     }
+    //next();
 };
 
 const readManyCtrl = (req, res, next) => {
@@ -56,6 +69,7 @@ const readManyCtrl = (req, res, next) => {
         console.log("Get collections failed");
         res.json({ "error": "Get Doc collections failed. Improper Id" });
     }
+    //next();
 };
 
 const writeCtrl = (req, res, next) => {
@@ -65,6 +79,7 @@ const writeCtrl = (req, res, next) => {
     db.write(params, req.body);
 
     res.json(req.body);
+    //next();
 };
 
 const updateDocCtrl = (req, res, next) => {
@@ -79,11 +94,114 @@ const updateDocCtrl = (req, res, next) => {
         console.log("Doc update failed. Improper Id");
     }
     res.json(req.body);
+    //next();
+};
+
+// for routehandler for  /health
+
+
+const createJwt = (projectId, privateKeyFile, algorithm) => {
+    // Create a JWT to authenticate this device. The device will be disconnected
+    // after the token expires, and will have to reconnect with a new token. The
+    // audience field should always be set to the GCP project id.
+    const token = {
+        iat: parseInt(Date.now() / 1000),
+        exp: parseInt(Date.now() / 1000) + 20 * 60, // 20 minutes
+        aud: projectId
+    };
+    const privateKey = fs.readFileSync(privateKeyFile);
+    return jwt.sign(token, privateKey, { algorithm: algorithm });
+};
+
+const _healthReportCtrl = (req, res, next) => {
+    let keys = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS));
+
+    async function main() {
+        const client = new JWT({
+            email: keys.client_email,
+            key: keys.private_key,
+            scopes: ['https://www.googleapis.com/auth/cloud-platform']
+        });
+        const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
+        const res = await client.request({ url });
+
+        console.log(res.data);
+    }
+
+    main().catch(console.error);
+
+    /*  const auth = new google.auth.GoogleAuth();
+     const compute =
+     async function getVmsExample() {
+         const options = {
+           maxResults: 1,
+         };
+         const vms = await compute.getVMs(options);
+         return vms;
+       }
+       
+      
+    const auth = new google.auth.GoogleAuth({
+        keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    });
+      //fetch('https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances', {method: 'post'})
+    //.then(res => res.json())
+    //.then(json => console.log(json));
+     /* const auth = new google.auth.GoogleAuth({
+        keyFile: '',
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+      }); */
+
+    let jwtHeader = Buffer.from('{"alg":"GOOGLE_APPLICATION_CREDENTIALS","typ":"JWT"}').toString('base64');
+
+    let iss = '{"iss":"nicejobsa@nicedb314.iam.gserviceaccount.com",';
+    let sub = '"sub": "sanchil.ca@gmail.com",';
+    let aud = '"aud":"https://oauth2.googleapis.com/token",';
+    let exp = `"exp":${parseInt(Date.now() / 1000) + 45 * 60},`;
+    let iat = `"iat":parseInt(Date.now() / 1000)}`;
+    let cm = iss.concat(sub).concat(aud).concat(exp).concat(iat);
+    let claimSet = Buffer.from(cm).toString('base64');
+
+    //console.log("JWT: ", jwtHeader ,": eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9");
+
+    //console.log("KEY: ",createJwt('nicedb314',process.env.GOOGLE_APPLICATION_CREDENTIALS,"RS256"));
+    //  console.log("Key: ", keyObj);
+    // res.send(key);
+};
+
+const healthReportCtrl = (req, res, next) => {
+
+    let keys = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS));
+
+    async function getToken() {
+        const client = new JWT({
+            email: keys.client_email,
+            key: keys.private_key,
+            scopes: ['https://www.googleapis.com/auth/cloud-platform']
+        });
+
+        req.session.jwt = client;
+        console.log(req.session.jwt.credentials.access_token);
+        return client;
+    }
+
+    getToken().then(async client => {
+        //    const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
+        console.log("access_token: ", req.session.jwt.credentials.access_token);
+
+        fetch(`https://compute.googleapis.com/compute/v1/projects/${keys.project_id}/zones/northamerica-northeast1-b/instanceGroupManagers/nice-group/listManagedInstances`, {
+            method: 'post',
+            headers: { 'Authorization': 'Bearer ya29.c.Kp8B_wfJan106sBYkkbRQC4szRAOPsCDDF5Jd52vTw33hBkWEChmSmZnUU2SoNzRqwm903TQgtwuWrGGEjrJry3jnLWkrwhNnU2Qc2fgAifHik8vz10VpcnxjvwMP9LIZPLT_ZasxTIDiXgvybunZetd7eGQz0Oyf6V-JZ4iAItmesudta8cEbEv7kVpH3LW5II6_AcrxmO1bWOiKovZ-5NM' }
+        }).then(res => res.json()).then(json => console.log(json));
+    }).catch(console.error);
 };
 
 module.exports = {
+    basicContrl,
     writeCtrl,
     readOneCtrl,
     updateDocCtrl,
-    readManyCtrl
+    readManyCtrl,
+    healthReportCtrl
 };

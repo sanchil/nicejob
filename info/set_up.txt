@@ -143,11 +143,11 @@ module.exports = { presets, sourceType };
 # docker network create --driver bridge redis-net
 
 # normal build within nicejob folder
-docker build -t sanchil/nicejob:1.3 .
+docker build -t sanchil/nicejob:1.5 .
 
 # from parent folder to build fireStoreAPI as well
-docker build -t sanchil/nicejob:1.4 -f nice/job/Dockerfile .
-docker image push sanchil/nicejob:1.4
+docker build -t sanchil/nicejob:1.5 -f nice/job/Dockerfile .
+docker image push sanchil/nicejob:1.5
 
 # run a node app container
 docker run --name nodeapp -dp 3000:3000 \
@@ -157,7 +157,7 @@ docker run --name nodeapp -dp 3000:3000 \
   -e NODE_ENV=prod \
   -e REDIS_HOST=redis \
   -e REDIS_PORT=6379 \
-  sanchil/nicejob:1.4
+  sanchil/nicejob:1.5
 
 # build redis image
 docker build -t sanchil/cache:1.0 -f nicejob/Dockerfile.redis .
@@ -270,10 +270,14 @@ curl -Is http://www.google.com | head -n 1
 curl -Is http://35.215.59.104| head -n 1
 
 curl -X GET -H "Content-Type:application/json" http://35.215.59.104:3000/Users/0 
+curl -X GET -H "Content-Type:application/json" http://35.215.59.104:3000/Users/cheetah.sambhar@gaur.com_aj_T
+
 
 curl -X POST -H "Content-Type:application/json" http://35.215.59.104:3000/Users/superman.batman@robin.com_JaDi -d '{"first_name":"superdog","last_name":"foxybat","email":"superman.batman@robin.com"}'
 
 curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/superman.batman@robin.com_JaDi -d '{"first_name":"superdog","last_name":"foxybat","email":"superman.batman@robin.com"}'
+beluga.whaleshark@seal.com_j75h
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/beluga.whaleshark@seal.com_j75h -d '{"first_name":"Hippo","last_name":"Rhino","email":"hippo.rhino@giraffe.com"}'
 
 gcloud compute --project=nicedb314 firewall-rules create nodejs --description="ports for nodejs" --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:3000-8000
 
@@ -316,6 +320,11 @@ curl -X POST https://compute.googleapis.com/compute/v1/projects/nicedb/regions/<
 
 ##################### gcloud commands
 
+# add api gateway service to project
+
+# enable app to validate api keys
+gcloud services enable API_ID-HASH.apigateway.PROJECT_ID.cloud.goog
+
 gcloud auth login
 
 gcloud config set project PROJECT_ID
@@ -339,3 +348,62 @@ gcloud compute instance-groups managed list-instances nice-group --zone="northam
 curl -X POST https://compute.googleapis.com/compute/v1/projects/<project-id>/regions/<region>/instanceGroupManagers/instance-group/listManagedInstances
 
 curl -X POST https://compute.googleapis.com/compute/v1/projects/nicedb/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+
+
+# create a health check
+# https://cloud.google.com/compute/docs/instance-groups/autohealing-instances-in-migs
+
+POST https://compute.googleapis.com/compute/v1/projects/project-id/global/healthChecks
+
+{
+ "name": "example-check",
+ "type": "http",
+ "port": 80,
+ "checkIntervalSec": 30,
+ "healthyThreshold": 1,
+ "timeoutSec": 10,
+ "unhealthyThreshold": 3
+}
+
+# open firewal ports to allow health check
+
+POST https://compute.googleapis.com/compute/v1/projects/[PROJECT_ID]/global/firewalls
+
+{
+ "name": "allow-health-check",
+ "network": "https://www.googleapis.com/compute/v1/projects/[PROJECT_ID]/global/networks/default",
+ "sourceRanges": [
+  "130.211.0.0/22",
+  "35.191.0.0/16"
+ ],
+ "allowed": [
+  {
+   "ports": [
+    "80"
+   ],
+   "IPProtocol": "tcp"
+  }
+ ]
+}
+
+# check status of unhealthy VM for regional 
+KEY=AIzaSyC_vnEq_M-KsGi9bCfn-kohYYaaPeo2YNs
+access_token=ya29.c.Kp8B_wfJan106sBYkkbRQC4szRAOPsCDDF5Jd52vTw33hBkWEChmSmZnUU2SoNzRqwm903TQgtwuWrGGEjrJry3jnLWkrwhNnU2Qc2fgAifHik8vz10VpcnxjvwMP9LIZPLT_ZasxTIDiXgvybunZetd7eGQz0Oyf6V-JZ4iAItmesudta8cEbEv7kVpH3LW5II6_AcrxmO1bWOiKovZ-5NM
+alias gcurl='curl -H "$(oauth2l header --json ~/credentials.json cloud-platform userinfo.email)" -H "Content-Type: application/json"'
+
+POST https://compute.googleapis.com/compute/v1/projects/<project-id>/regions/<region>/instanceGroupManagers/<instance-group>/listManagedInstances
+POST https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+
+curl -H "Authorization: Bearer ya29.c.Kp8B_wfJan106sBYkkbRQC4szRAOPsCDDF5Jd52vTw33hBkWEChmSmZnUU2SoNzRqwm903TQgtwuWrGGEjrJry3jnLWkrwhNnU2Qc2fgAifHik8vz10VpcnxjvwMP9LIZPLT_ZasxTIDiXgvybunZetd7eGQz0Oyf6V-JZ4iAItmesudta8cEbEv7kVpH3LW5II6_AcrxmO1bWOiKovZ-5NM" \
+ -X POST https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+
+
+
+# check status of unhealthy VM for zonal
+
+POST https://compute.googleapis.com/compute/v1/projects/<project-id>/zones/<zone>/instanceGroupManagers/<instance-group>/listManagedInstances
+POST https://compute.googleapis.com/compute/v1/projects/nicedb314/zones/northamerica-northeast1-b/instanceGroupManagers/nice-group/listManagedInstances
+
+
+curl -H "Authorization: Bearer ya29.c.Kp8B_wfJan106sBYkkbRQC4szRAOPsCDDF5Jd52vTw33hBkWEChmSmZnUU2SoNzRqwm903TQgtwuWrGGEjrJry3jnLWkrwhNnU2Qc2fgAifHik8vz10VpcnxjvwMP9LIZPLT_ZasxTIDiXgvybunZetd7eGQz0Oyf6V-JZ4iAItmesudta8cEbEv7kVpH3LW5II6_AcrxmO1bWOiKovZ-5NM" \
+ -X POST https://compute.googleapis.com/compute/v1/projects/nicedb314/zones/northamerica-northeast1-b/instanceGroupManagers/nice-group/listManagedInstances

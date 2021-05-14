@@ -11,9 +11,9 @@ var express = require('express');
 var controllers = require('../controllers');
 var router = express.Router();
 
-router.route('/').get((req, res, next) => {
-  res.json({ "hello": "world" });
-});
+router.route('/').get(controllers.basicContrl);
+
+router.route('/health').get(controllers.healthReportCtrl);
 
 router.route('/:collection/:id').get(controllers.readOneCtrl).post(controllers.updateDocCtrl);
 

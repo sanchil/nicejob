@@ -1,0 +1,38 @@
+{"alg":"RS256","typ":"JWT"}.
+{
+"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
+"scope":"https://www.googleapis.com/auth/prediction",
+"aud":"https://oauth2.googleapis.com/token",
+"exp":1328554385,
+"iat":1328550785
+}.
+[signature bytes]
+
+
+{"alg":"RS256","typ":"JWT"}.
+{
+"iss":"nicejobsa@nicedb314.iam.gserviceaccount.com",
+"sub": "sanchil.ca@gmail.com",
+"aud":"https://oauth2.googleapis.com/token",
+"exp":parseInt(Date.now() / 1000) + 45 * 60,
+"iat":parseInt(Date.now() / 1000),
+}.
+[]
+
+base 64 header : eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9
+
+const createJwt = (projectId, privateKeyFile, algorithm) => {
+  // Create a JWT to authenticate this device. The device will be disconnected
+  // after the token expires, and will have to reconnect with a new token. The
+  // audience field should always be set to the GCP project id.
+  const token = {
+    iat: parseInt(Date.now() / 1000),
+    exp: parseInt(Date.now() / 1000) + 20 * 60, // 20 minutes
+    aud: projectId,
+  };
+  const privateKey = readFileSync(privateKeyFile);
+  return jwt.sign(token, privateKey, {algorithm: algorithm});
+};
+
+
+/ adae2658d6d534084c54229bac97dd6ef60af2ef

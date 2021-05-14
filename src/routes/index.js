@@ -11,12 +11,14 @@ var express = require('express');
 var controllers = require('../controllers');
 var router = express.Router();
 
+
 router
   .route('/')
-  .get((req, res, next) => {
-    res.json({ "hello": "world" });
-  })
+  .get(controllers.basicContrl);
 
+router
+  .route('/health')
+  .get(controllers.healthReportCtrl);
 
 router
   .route('/:collection/:id')
