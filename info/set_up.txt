@@ -393,9 +393,11 @@ alias gcurl='curl -H "$(oauth2l header --json ~/credentials.json cloud-platform 
 
 POST https://compute.googleapis.com/compute/v1/projects/<project-id>/regions/<region>/instanceGroupManagers/<instance-group>/listManagedInstances
 POST https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+
 
 curl -H "Authorization: Bearer ya29.c.Kp8B_wfJan106sBYkkbRQC4szRAOPsCDDF5Jd52vTw33hBkWEChmSmZnUU2SoNzRqwm903TQgtwuWrGGEjrJry3jnLWkrwhNnU2Qc2fgAifHik8vz10VpcnxjvwMP9LIZPLT_ZasxTIDiXgvybunZetd7eGQz0Oyf6V-JZ4iAItmesudta8cEbEv7kVpH3LW5II6_AcrxmO1bWOiKovZ-5NM" \
- -X POST https://compute.googleapis.com/compute/v1/projects/nicedb314/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
+ -X POST https://compute.googleapis.com/compute/v1/projects/${keys.project_id}/regions/northamerica-northeast1/instanceGroupManagers/nice-group/listManagedInstances
 
 
 

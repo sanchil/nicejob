@@ -133,25 +133,6 @@ const healthReportCtrl = (req, res, next) => {
 
     let keys = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS));
 
-
-    /*   async function main() {
-         const client = new JWT({
-           email: keys.client_email,
-           key: keys.private_key,
-           scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-         });
-         const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
-         const result = await client.request({url});
-         console.log(client);
-         res.json(client);
-       }
-       
-       main().catch(console.error);  */
-
-
-    /*   
-*/
-
     async function getToken() {
         const client = new JWT({
             email: keys.client_email,
