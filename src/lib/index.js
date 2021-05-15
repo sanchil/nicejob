@@ -96,8 +96,8 @@ var writeRedisCache = (on,cachetimeout) => {
     return (req, res, next) => {
         let key = '__express__' + req.originalUrl || req.url;
         console.log("Cacheing results, "+ res.locals.data,"cachetimeout", cachetimeout);
-        if (on === 1) {
-            console.log("Calling cache"); 
+        if (on) {
+            console.log("Writing to cache"); 
             res.sendResponse = res.send
             res.send = (body) => {
                 redisClient.set(key, body);
