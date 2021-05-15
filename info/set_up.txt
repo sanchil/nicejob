@@ -241,7 +241,11 @@ curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users -d '
 
 curl -X GET -H "Content-Type:application/json" http://localhost:3000/Users/1 
 
+curl -X DELETE -H "Content-Type:application/json" http://localhost:3000/Users/newone_zSCS 
 
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users/google.yahoo@aol.com_CyyR -d '{"first_name":"Owl","last_name":"SeaEagle","email":"owl.seaeagle@ostrich.com"}'
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/Users -d '{"first_name":"macaw","last_name":"cuckatoo","email":"macaw.cuckatoo@parakeet.com"}'
 
 ############## redis caching ###########################
 

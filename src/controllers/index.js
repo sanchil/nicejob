@@ -116,6 +116,21 @@ const updateDocCtrl = (req, res, next) => {
     //next();
 }
 
+const deleteDocCtrl = (req, res, next) => {
+
+    if (req.params.id) {
+        const params = {}
+        params['collection'] = req.params.collection;
+        params['id'] = req.params.id;
+        //console.log("Controller params id",params['id']);
+        db.deleteDoc(req.params);
+    } else {
+        console.log("Doc delete failed.");
+    }
+    res.json(req.body);
+    //next();
+}
+
 // for routehandler for  /health
 
 
@@ -176,5 +191,6 @@ module.exports = {
     readOneCtrl,
     updateDocCtrl,
     readManyCtrl,
+    deleteDocCtrl,
     healthReportCtrl,
 }

@@ -9,13 +9,6 @@ const session = require('express-session');
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
 const lib = require('./lib');
 
-/* const redis = require("redis");
-
-const redisClient = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT
-}); */
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -31,53 +24,10 @@ app.use(session({
   saveUninitialized: true
 }));
 
+var cachebool = process.env.REDIS_HOST && process.env.REDIS_PORT && process.env.CACHEONOFF && process.env.CACHEONOFF == 1;
+console.log("Cache bool is: ", cachebool);
+
 const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
-
-/* 
-redisClient.on("error", function (error) {
-  console.error("REDIS CLIENT ERROR: ", error);
-});
-
-var cache = (cachetimeout) => {
-  return (req, res, next) => {
-
-    let key = '__express__' + req.originalUrl || req.url
-    console.log("Cache key:", key);
-
-    if (req.method == 'GET') {
-      redisClient.get(key, (err, cachedBody) => {
-        if (err) {
-          res.sendResponse = res.send
-          res.send = (body) => {
-            redisClient.set(key, body);
-            redisClient.expire(key, cachetimeout * 1000);
-            res.sendResponse(body)
-          }
-
-        }
-        if (cachedBody) {
-          res.send(cachedBody)
-          return
-        } else {
-          res.sendResponse = res.send
-          res.send = (body) => {
-            redisClient.set(key, body);
-            redisClient.expire(key, cachetimeout * 1000);
-            res.sendResponse(body)
-          }
-          next()
-        }
-
-
-      });
-
-    } else {
-      next();
-    }
-
-  }
-}
- */
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -88,7 +38,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', lib.readRedisCache(cache_expire), indexRouter);
+
+if (cachebool) {
+  app.use('/', lib.readRedisCache(cache_expire), indexRouter);
+} else {
+  app.use('/', indexRouter);
+}
+
 //app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

@@ -33,6 +33,8 @@ router
   .route('/:collection/:id')
   .get(controllers.readOneCtrl, lib.writeRedisCache(cachebool,cache_expire))
   .post(controllers.updateDocCtrl)
+  .delete(controllers.deleteDocCtrl)
+  
 
 router
   .route('/:collection')
