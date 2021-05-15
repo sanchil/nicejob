@@ -112,11 +112,13 @@ const healthReportCtrl = (req, res, next) => {
     let scopes = ['https://www.googleapis.com/auth/cloud-platform'];
     let url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
     console.log("Client email: ", keys.client_email);
+    let HEALTH_URL = "https://compute.googleapis.com/compute/v1/projects/nicedb314/zones/northamerica-northeast1-b/instanceGroupManagers/nice-group/listManagedInstances";
 
     lib.getToken(keys, url, scopes).then(client => {
         req.session.jwt = client;
         req.session.access_token = client.credentials.access_token;
-        fetch(process.env.HEALTH_URL, {
+        //fetch(process.env.HEALTH_URL, {
+        fetch(HEALTH_URL, {
             method: 'post',
             headers: { 'Authorization': 'Bearer ' + req.session.access_token }
         }).then(result => result.json()).then(json => {

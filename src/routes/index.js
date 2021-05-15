@@ -27,7 +27,7 @@ router
 
   router
   .route('/:collection/:id')
-  .get(controllers.readOneCtrl, lib.writeRedisCache(1,cache_expire))
+  .get(controllers.readOneCtrl, lib.writeRedisCache(0,cache_expire))
   .post(controllers.updateDocCtrl)
 
 router

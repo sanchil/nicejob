@@ -2,10 +2,6 @@ const { JWT } = require('google-auth-library');
 const fs = require('fs');
 const redis = require("redis");
 
-const redisClient = redis.createClient({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT
-});
 
 
 
@@ -42,56 +38,17 @@ async function getToken(keys, url, scopes) {
 }
 
 
-var _cache = (cachetimeout) => {
-    return (req, res, next) => {
-        let key = '__express__' + req.originalUrl || req.url
-        console.log("Cache key:", key);
-
-        if (req.method == 'GET') {
-            redisClient.get(key, (err, cachedBody) => {
-                if (err) {
-
-                    console.log("Sending uncache: ", cachedBody);
-                    res.sendResponse = res.send
-                    res.send = (body) => {
-                        redisClient.set(key, body);
-                        redisClient.expire(key, cachetimeout * 1000);
-                        res.sendResponse(body)
-                    }
-
-                }
-                if (cachedBody && Array.isArray(cachedBody) && cachedBody.length == 0) {
-                    console.log("Empty array deteched .. caching now : ", cachedBody);
-                    res.sendResponse = res.send
-                    res.send = (body) => {
-                        redisClient.set(key, body);
-                        redisClient.expire(key, cachetimeout * 1000);
-                        res.sendResponse(body)
-                    }
-
-                }
-
-                console.log("Sending cache: ", cachedBody);
-                res.send(cachedBody);
-
-                return
-
-
-
-            });
-
-        } else {
-            next();
-        }
-
-    }
-}
-
 /**
  * This method reads redis caches for results and 
  * sends it over if finds any.
  * 
  */
+
+const redisClient = redis.createClient({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT
+});
+
 
 var readRedisCache = (cachetimeout) => {
     return (req, res, next) => {
