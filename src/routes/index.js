@@ -13,13 +13,15 @@ var lib = require('../lib');
 var router = express.Router();
 
 const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
+const cache_onoff = process.env.CACHEONOFF ? parseInt(Number(process.env.CACHEONOFF)) : 1;
+
 
 // to switch off caching use 0 as first
 // parameter to lib.cacheResults(0,cache_expire);
 
 router
   .route('/')
-  .get(controllers.basicContrl,lib.writeRedisCache(1,cache_expire));
+  .get(controllers.basicContrl,lib.writeRedisCache(cache_onoff,cache_expire));
 
   router
   .route('/health')
@@ -27,12 +29,12 @@ router
 
   router
   .route('/:collection/:id')
-  .get(controllers.readOneCtrl, lib.writeRedisCache(0,cache_expire))
+  .get(controllers.readOneCtrl, lib.writeRedisCache(cache_onoff,cache_expire))
   .post(controllers.updateDocCtrl)
 
 router
   .route('/:collection')
-  .get(controllers.readManyCtrl, lib.writeRedisCache(1,cache_expire))
+  .get(controllers.readManyCtrl, lib.writeRedisCache(cache_onoff,cache_expire))
   .post(controllers.writeCtrl)
 
 

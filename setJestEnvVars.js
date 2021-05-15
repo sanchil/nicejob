@@ -7,4 +7,4 @@ process.env.NICEAPP_CACHE_MAX_AGE=3600;
 process.env.NICEAPP_CACHE_ALLOCATED_MEM=64;
 process.env.REDIS_PORT=6379
 process.env.REDIS_HOST='localhost';
-process.env.HEALTH_URL='https://compute.googleapis.com/compute/v1/projects/nicedb314/zones/northamerica-northeast1-b/instanceGroupManagers/nice-group/listManagedInstances';
+process.env.CACHEONOFF=1;
