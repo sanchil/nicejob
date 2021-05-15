@@ -7,13 +7,14 @@ var logger = require('morgan');
 const { Firestore } = require('@google-cloud/firestore');
 const session = require('express-session');
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
+const lib = require('./lib');
 
-const redis = require("redis");
+/* const redis = require("redis");
 
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT
-});
+}); */
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -22,7 +23,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
- app.use(
+app.use(
   session({
     store: new FirestoreStore({
       dataset: new Firestore(),
@@ -32,21 +33,23 @@ var app = express();
     resave: false,
     saveUninitialized: true,
   })
-); 
+);
 
+
+const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
+
+
+/* 
 redisClient.on("error", function (error) {
-  console.error("REDIS CLIENT ERROR: ",error);
+  console.error("REDIS CLIENT ERROR: ", error);
 });
 
-const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE?parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)): 3600;
-
-
-
-
- var cache = (cachetimeout) => {
+var cache = (cachetimeout) => {
   return (req, res, next) => {
 
     let key = '__express__' + req.originalUrl || req.url
+    console.log("Cache key:", key);
+
     if (req.method == 'GET') {
       redisClient.get(key, (err, cachedBody) => {
         if (err) {
@@ -79,8 +82,8 @@ const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE?parseInt(Number(process.e
     }
 
   }
-} 
-
+}
+ */
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -91,7 +94,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', cache(cache_expire), indexRouter);
+app.use('/', lib.readRedisCache(cache_expire),indexRouter);
 //app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

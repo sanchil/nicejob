@@ -7,13 +7,14 @@ var logger = require('morgan');
 const { Firestore } = require('@google-cloud/firestore');
 const session = require('express-session');
 const { FirestoreStore } = require('@google-cloud/connect-firestore');
+const lib = require('./lib');
 
-const redis = require("redis");
+/* const redis = require("redis");
 
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT
-});
+}); */
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -30,44 +31,53 @@ app.use(session({
   saveUninitialized: true
 }));
 
+const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
+
+/* 
 redisClient.on("error", function (error) {
   console.error("REDIS CLIENT ERROR: ", error);
 });
 
-const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
-
-var cache = cachetimeout => {
+var cache = (cachetimeout) => {
   return (req, res, next) => {
 
-    let key = '__express__' + req.originalUrl || req.url;
+    let key = '__express__' + req.originalUrl || req.url
+    console.log("Cache key:", key);
+
     if (req.method == 'GET') {
       redisClient.get(key, (err, cachedBody) => {
         if (err) {
-          res.sendResponse = res.send;
-          res.send = body => {
+          res.sendResponse = res.send
+          res.send = (body) => {
             redisClient.set(key, body);
             redisClient.expire(key, cachetimeout * 1000);
-            res.sendResponse(body);
-          };
+            res.sendResponse(body)
+          }
+
         }
         if (cachedBody) {
-          res.send(cachedBody);
-          return;
+          res.send(cachedBody)
+          return
         } else {
-          res.sendResponse = res.send;
-          res.send = body => {
+          res.sendResponse = res.send
+          res.send = (body) => {
             redisClient.set(key, body);
             redisClient.expire(key, cachetimeout * 1000);
-            res.sendResponse(body);
-          };
-          next();
+            res.sendResponse(body)
+          }
+          next()
         }
+
+
       });
+
     } else {
       next();
     }
-  };
-};
+
+  }
+}
+ */
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -78,10 +88,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use('/', cache(cache_expire), indexRouter);
-app.use('/', indexRouter);
+app.use('/', lib.readRedisCache(cache_expire), indexRouter);
+//app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/health', healthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

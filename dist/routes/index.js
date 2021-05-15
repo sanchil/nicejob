@@ -1,22 +1,28 @@
 /**
  * #############################################################
  * 
- * 
- * 
- * 
+ * To switch of caching simply use 0 as the first parameter. 
+ *  
+ *  
  * #############################################################
  */
 
 var express = require('express');
 var controllers = require('../controllers');
+var lib = require('../lib');
 var router = express.Router();
 
-router.route('/').get(controllers.basicContrl);
+const cache_expire = process.env.NICEAPP_CACHE_MAX_AGE ? parseInt(Number(process.env.NICEAPP_CACHE_MAX_AGE)) : 3600;
+
+// to switch off caching use 0 as first
+// parameter to lib.cacheResults(0,cache_expire);
+
+router.route('/').get(controllers.basicContrl, lib.writeRedisCache(1, cache_expire));
 
 router.route('/health').get(controllers.healthReportCtrl);
 
-router.route('/:collection/:id').get(controllers.readOneCtrl).post(controllers.updateDocCtrl);
+router.route('/:collection/:id').get(controllers.readOneCtrl, lib.writeRedisCache(1, cache_expire)).post(controllers.updateDocCtrl);
 
-router.route('/:collection').get(controllers.readManyCtrl).post(controllers.writeCtrl);
+router.route('/:collection').get(controllers.readManyCtrl, lib.writeRedisCache(1, cache_expire)).post(controllers.writeCtrl);
 
 module.exports = router;

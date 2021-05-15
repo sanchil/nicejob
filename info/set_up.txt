@@ -143,21 +143,21 @@ module.exports = { presets, sourceType };
 # docker network create --driver bridge redis-net
 
 # normal build within nicejob folder
-docker build -t sanchil/nicejob:1.5 .
+docker build -t sanchil/nicejob:1.6 .
 
 # from parent folder to build fireStoreAPI as well
-docker build -t sanchil/nicejob:1.5 -f nice/job/Dockerfile .
-docker image push sanchil/nicejob:1.5
+docker build -t sanchil/nicejob:1.6 -f nice/job/Dockerfile .
+docker image push sanchil/nicejob:1.6
 
 # run a node app container
-docker run --name nodeapp -dp 3000:3000 \
+docker run --name nodeapp -dp 4000:3000 \
   --network redis-net \
   -e GOOGLE_APPLICATION_CREDENTIALS=nicejob_key.json \
   -e USERS=Users \
   -e NODE_ENV=prod \
   -e REDIS_HOST=redis \
   -e REDIS_PORT=6379 \
-  sanchil/nicejob:1.5
+  sanchil/nicejob:1.6
 
 # build redis image
 docker build -t sanchil/cache:1.0 -f nicejob/Dockerfile.redis .
