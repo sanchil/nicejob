@@ -19,6 +19,7 @@ const createJwt = (projectId, privateKeyFile, algorithm) => {
 }
 
 async function getToken(keys, url, scopes) {
+    //  keys : service_account.json
     //  scopes: ['https://www.googleapis.com/auth/cloud-platform'],
     //  const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
 
@@ -27,7 +28,7 @@ async function getToken(keys, url, scopes) {
         key: keys.private_key,
         scopes: scopes,
     });
-    //  const url = `https://dns.googleapis.com/dns/v1/projects/${keys.project_id}`;
+   
     const result = await client.request({ url });
 
     //req.session.jwt = client;
