@@ -1,0 +1,17 @@
+FROM redis:6.2.3-alpine 
+
+RUN         mkdir -p /etc/redis/log && \        
+            mkdir -p /var/redis/6379 && \
+            mkdir -p /var/lib/data && \
+            mkdir -p /var/log/ && \            
+            chmod -R 755 /var/log &&\
+            touch /etc/redis/log/redis_6379.log && \  
+            chmod -R 755 /etc/redis/log/redis_6379.log &&\          
+            echo "vm.overcommit_memory=1" >> /etc/sysctl.conf && \
+            su - root -c sysctl vm.overcommit_memory=1             
+COPY ./6379.conf /etc/redis
+EXPOSE 6379
+CMD [ "redis-server","/etc/redis/6379.conf"]
+
+
+
