@@ -160,7 +160,8 @@ docker run --name nodeapp -dp 3000:3000 \
   -e NICEAPP_CACHE_MAX_AGE=3600 \
   -e NICEAPP_CACHE_ALLOCATED_MEM=64 \
   -e CACHEONOFF=1 \
-  sanchil/nicejob:1.5
+  -e PORT=3000 \
+  sanchil/nicejob:1.6
 
 # build redis image
 docker build -t sanchil/cache:1.0 -f Dockerfile.redis .
